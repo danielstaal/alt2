@@ -200,6 +200,8 @@ def create_dicts(en_txt,de_txt,alignments, no_of_sentences=50000):
 	count_ef = {}# count of appeareances of single words aligned to other language words
 	we = {}# appearance of single words (english)
 	wf = {}# appearance of single words (deutsch)
+	# assignment 2: dictionary['sentence']=[[subphrases]]
+	subphrases_dic = {}
 
 	j = 0
 	k = 0
@@ -224,6 +226,9 @@ def create_dicts(en_txt,de_txt,alignments, no_of_sentences=50000):
 				# aligns_dic["session of the ^ sitzungsperiode des"] = [['sitzungsperiode', 'session'], ['des', 'of the']]
 				aligns_dic["".join(al)] = alignments
 
+		subphrases_dic[en_sen[:-1]] = aligned_sub_phrases;
+
+
 	# fill KMO dictionaries
 	for pairs,counts in en_de_dic.items():
 		[en,de] = pairs.split(" ^ ")
@@ -238,7 +243,7 @@ def create_dicts(en_txt,de_txt,alignments, no_of_sentences=50000):
 		for de_word in de_split:
 			wf[de_word] = wf.get(de_word, 0) + 1
 
-	return en_dic,de_dic,en_de_dic,aligns_dic,count_ef,we,wf
+	return en_dic,de_dic,en_de_dic,aligns_dic,count_ef,we,wf,subphrases_dic
 
 
 # assuming subphrases_dic['sentence'] = [['e_sub_1 ^ f_sub_1'], ['e_sub_2 ^ f_sub_2'], ['e_sub_3 ^ f_sub_3']]
