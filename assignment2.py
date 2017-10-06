@@ -8,7 +8,7 @@ from copy import deepcopy
 # 0-0 1-1 1-2 2-3
 
 # alignments = [[0,0], [1,1], [1,2], [2,3]]
-def phrase_extraction(sen1, sen2, alignments, en_sub_phrases, de_sub_phrases):
+def phrase_extraction(sen1, sen2, alignments):#, en_sub_phrases, de_sub_phrases):
 	sen1_words = sen1.split(" ")
 	sen2_words = sen2.split(" ")
 
@@ -97,22 +97,22 @@ def phrase_extraction(sen1, sen2, alignments, en_sub_phrases, de_sub_phrases):
 			de_strings = reorder_string(possibilities[0][0])
 			for de_poss in possibilities[0]:
 				for en_poss in possibilities[1]:
-					# make sure the longest subphrase is 5 words
-					if len(en_poss.split()) <= 5 and len(de_poss.split()) <= 5:
+					# make sure the longest subphrase is 7 words
+					if len(en_poss.split()) <= 7 and len(de_poss.split()) <= 7:
 						aux_en_strings = reorder_string(en_poss)
 						aux_de_strings = reorder_string(de_poss)
 						if check_continuity(aux_en_strings, aux_de_strings):
-							aux_en_strings = translate_numbers_to_words(aux_en_strings, sen1_words)
-							aux_de_strings = translate_numbers_to_words(aux_de_strings, sen2_words)
+							#aux_en_strings = translate_numbers_to_words(aux_en_strings, sen1_words)
+							#aux_de_strings = translate_numbers_to_words(aux_de_strings, sen2_words)
 							aux_en_strings = aux_en_strings[:-1]
 							aux_de_strings = aux_de_strings[:-1]
-							en_sub_phrases[aux_en_strings] = en_sub_phrases.get(aux_en_strings, 0) + 1
-							de_sub_phrases[aux_de_strings] = de_sub_phrases.get(aux_de_strings, 0) + 1
+							#en_sub_phrases[aux_en_strings] = en_sub_phrases.get(aux_en_strings, 0) + 1
+							#de_sub_phrases[aux_de_strings] = de_sub_phrases.get(aux_de_strings, 0) + 1
 							if aux_en_strings + ' ^ ' + aux_de_strings not in aligned_sub_phrases:
 								aligned_sub_phrases.append(aux_en_strings + ' ^ ' + aux_de_strings)
-								seg_aligned_sub_phrases.append(translate_numbers_to_words_aligned(aligned_words, sen1_words, sen2_words))
+								#seg_aligned_sub_phrases.append(translate_numbers_to_words_aligned(aligned_words, sen1_words, sen2_words))
 
-	return en_sub_phrases, de_sub_phrases, aligned_sub_phrases, seg_aligned_sub_phrases
+	return aligned_sub_phrases
 
 
 def add_string_if_it_doesnt_contain_reps(substring, strings):
@@ -192,14 +192,14 @@ def add_possibilities_right(possibilities_l, right_words):
 	return possibilities_l
 
 def create_dicts(en_txt,de_txt,alignments, no_of_sentences=50000):
-	en_dic = {}
-	de_dic = {}
-	en_de_dic = {}
-	aligns_dic = {}
-	# KMO dictionaries
-	count_ef = {}# count of appeareances of single words aligned to other language words
-	we = {}# appearance of single words (english)
-	wf = {}# appearance of single words (deutsch)
+	'''en_dic = {}
+				de_dic = {}
+				en_de_dic = {}
+				aligns_dic = {}
+				# KMO dictionaries
+				count_ef = {}# count of appeareances of single words aligned to other language words
+				we = {}# appearance of single words (english)
+				wf = {}# appearance of single words (deutsch)'''
 	# assignment 2: dictionary['sentence']=[[subphrases]]
 	subphrases_dic = {}
 
@@ -208,61 +208,72 @@ def create_dicts(en_txt,de_txt,alignments, no_of_sentences=50000):
 
 	for en_sen, de_sen, alignment in zip(en_txt[:no_of_sentences], de_txt[:no_of_sentences], alignments[:no_of_sentences]):	
 		if j % 100 == 0:
-			print(float(j)/len(en_txt))
+			print(float(j)/no_of_sentences)
 		j += 1
 
 		# alignments = [[0,0], [1,1], [1,2], [2,3]]
 		alignment = alignment.split()#.split('-')
 		for i, el in enumerate(alignment):
 			alignment[i] = el.split('-')
-		en_dic, de_dic, aligned_sub_phrases, seg_aligned_sub_phrases = phrase_extraction(en_sen[:-1], de_sen[:-1], alignment, en_dic, de_dic)
 		
-		for al, alignments in zip(aligned_sub_phrases, seg_aligned_sub_phrases):
-			if al in en_de_dic:
-				en_de_dic["".join(al)] += 1
-			else:
-				en_de_dic["".join(al)] = 1
-				# Stores alignments of the sub_phrase. Used in lexical_translation_probabilities(). Example:
-				# aligns_dic["session of the ^ sitzungsperiode des"] = [['sitzungsperiode', 'session'], ['des', 'of the']]
-				aligns_dic["".join(al)] = alignments
+		aligned_sub_phrases = phrase_extraction(en_sen[:-1], de_sen[:-1], alignment)#, en_dic, de_dic)
 
 		subphrases_dic[en_sen[:-1]] = aligned_sub_phrases;
 
-
-	# fill KMO dictionaries
-	for pairs,counts in en_de_dic.items():
-		[en,de] = pairs.split(" ^ ")
-		en_split = en.split()
-		de_split = de.split()
-		for en_word in en_split:
-			for de_word in de_split:
-				ende = en_word + ' ' + de_word
-				count_ef[ende] = count_ef.get(ende, 0) + 1
-		for en_word in en_split:
-			we[en_word] = we.get(en_word, 0) + 1
-		for de_word in de_split:
-			wf[de_word] = wf.get(de_word, 0) + 1
-
-	return en_dic,de_dic,en_de_dic,aligns_dic,count_ef,we,wf,subphrases_dic
+	return subphrases_dic
 
 
-# assuming subphrases_dic['sentence'] = [['e_sub_1 ^ f_sub_1'], ['e_sub_2 ^ f_sub_2'], ['e_sub_3 ^ f_sub_3']]
+# assuming subphrases_dic['sentence (in english)'] = [['e_sub_1 ^ f_sub_1'], ['e_sub_2 ^ f_sub_2'], ['e_sub_3 ^ f_sub_3']]
+# 												   = [['0 1 2 ^ 2 3 4'],...]
 def count_reorderings(sentences, subphrases_dic):
-	p_l_r_m  = {}
-	p_l_r_s  = {}
-	p_l_r_dl = {}
-	p_l_r_dr = {}
-	p_r_l_m  = {}
-	p_r_l_s  = {}
-	p_r_l_dl = {}
-	p_r_l_dr = {}
+	# is this the phrase model?
+	# ASSUMING SUBPHRASES IN DICTIONARY ARE IN ORDER (in order of english words)
+	# ASSUMING EVERYTHING IS NUMBERS
+	p_l_r_m_phrase_based  = {}
+	p_l_r_s_phrase_based  = {}
+	p_l_r_dl_phrase_based = {}
+	p_l_r_dr_phrase_based = {}
+	p_r_l_m_phrase_based  = {}
+	p_r_l_s_phrase_based  = {}
+	p_r_l_dl_phrase_based = {}
+	p_r_l_dr_phrase_based = {}
 	for sent in sentences:
-		# left to right
+		#
+		subphrases = subphrases_dic[sent[:-1]]
+		sent_split = sent.split()
+		for w_id, word in enumerate(sent_split):
+			for s_id, subphr in enumerate(subphrases):
+				[en1, de1] = subphr.split(" ^ ")
+				last_word_en = en1.split()[-1]
 
+				if w_id != len(sent_split):#left to right & right to left
+					if int(last_word_en) == w_id:
+						for s_id2 in range(len(subphrases)):#assuming its in order
+							[en2, de2] = subphrases[s_id2].split(" ^ ")
+							first_word = en2.split()[0]
+							#print str(w_id+1)
+							if first_word == str(w_id+1):
+								#print "hey"
+								last_word_de1  = de1.split()[-1]
+								first_word_de2 = de2.split()[0]
+								jump_size = int(first_word_de2)-int(last_word_de1)
+								if jump_size == 1:#monotonous
+									p_l_r_m_phrase_based[subphr] = p_l_r_m_phrase_based.get(subphr, 0) + 1
+								elif jump_size > 1:#discontinous
+									p_l_r_dr_phrase_based[subphr] = p_l_r_dr_phrase_based.get(subphr, 0) + 1
+								first_word_de1 = de1.split()[0]
+								last_word_de2  = de2.split()[-1]
+								jump_size = int(first_word_de1)-int(last_word_de2)
+								if jump_size == 1:#swap
+									p_l_r_s_phrase_based[subphr] = p_l_r_s_phrase_based.get(subphr, 0) + 1
+								elif jump_size > 1:#discontinous
+									p_l_r_dr_phrase_based[subphr] = p_l_r_dr_phrase_based.get(subphr, 0) + 1
 
-
+	return p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dr_phrase_based
 
 if __name__ == '__main__':
+
+    no_of_sentences = 1
 
     e = open("en.txt", 'r')
     d = open("de.txt", 'r')
@@ -270,3 +281,13 @@ if __name__ == '__main__':
     en_txt = e.readlines()
     de_txt = d.readlines()
     alignments = a.readlines()
+
+    subphrases_dic = create_dicts(en_txt,de_txt,alignments, no_of_sentences)
+
+    #print subphrases_dic
+
+    p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dr_phrase_based = count_reorderings(en_txt[:no_of_sentences], subphrases_dic)
+
+    #print p_l_r_m_phrase_based
+    #print p_l_r_s_phrase_based
+    #print p_l_r_dr_phrase_based
