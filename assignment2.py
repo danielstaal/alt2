@@ -98,19 +98,19 @@ def phrase_extraction(sen1, sen2, alignments):#, en_sub_phrases, de_sub_phrases)
 			for de_poss in possibilities[0]:
 				for en_poss in possibilities[1]:
 					# make sure the longest subphrase is 7 words
-					if len(en_poss.split()) <= 7 and len(de_poss.split()) <= 7:
-						aux_en_strings = reorder_string(en_poss)
-						aux_de_strings = reorder_string(de_poss)
-						if check_continuity(aux_en_strings, aux_de_strings):
-							#aux_en_strings = translate_numbers_to_words(aux_en_strings, sen1_words)
-							#aux_de_strings = translate_numbers_to_words(aux_de_strings, sen2_words)
-							aux_en_strings = aux_en_strings[:-1]
-							aux_de_strings = aux_de_strings[:-1]
-							#en_sub_phrases[aux_en_strings] = en_sub_phrases.get(aux_en_strings, 0) + 1
-							#de_sub_phrases[aux_de_strings] = de_sub_phrases.get(aux_de_strings, 0) + 1
-							if aux_en_strings + ' ^ ' + aux_de_strings not in aligned_sub_phrases:
-								aligned_sub_phrases.append(aux_en_strings + ' ^ ' + aux_de_strings)
-								#seg_aligned_sub_phrases.append(translate_numbers_to_words_aligned(aligned_words, sen1_words, sen2_words))
+					#if len(en_poss.split()) <= 7 and len(de_poss.split()) <= 7:
+					aux_en_strings = reorder_string(en_poss)
+					aux_de_strings = reorder_string(de_poss)
+					if check_continuity(aux_en_strings, aux_de_strings):
+						#aux_en_strings = translate_numbers_to_words(aux_en_strings, sen1_words)
+						#aux_de_strings = translate_numbers_to_words(aux_de_strings, sen2_words)
+						aux_en_strings = aux_en_strings[:-1]
+						aux_de_strings = aux_de_strings[:-1]
+						#en_sub_phrases[aux_en_strings] = en_sub_phrases.get(aux_en_strings, 0) + 1
+						#de_sub_phrases[aux_de_strings] = de_sub_phrases.get(aux_de_strings, 0) + 1
+						if aux_en_strings + ' ^ ' + aux_de_strings not in aligned_sub_phrases:
+							aligned_sub_phrases.append(aux_en_strings + ' ^ ' + aux_de_strings)
+							#seg_aligned_sub_phrases.append(translate_numbers_to_words_aligned(aligned_words, sen1_words, sen2_words))
 
 	return aligned_sub_phrases
 
@@ -191,7 +191,7 @@ def add_possibilities_right(possibilities_l, right_words):
 		possibilities_l.append(possibilities_l[0]+' '.join(add_right)+' ')
 	return possibilities_l
 
-def create_dicts(en_txt,de_txt,alignments, no_of_sentences=50000):
+def create_dicts(en_txt,de_txt,alignments, no_of_sentences=50000, sentence_start=0):
 	'''en_dic = {}
 				de_dic = {}
 				en_de_dic = {}
@@ -206,7 +206,7 @@ def create_dicts(en_txt,de_txt,alignments, no_of_sentences=50000):
 	j = 0
 	k = 0
 
-	for en_sen, de_sen, alignment in zip(en_txt[:no_of_sentences], de_txt[:no_of_sentences], alignments[:no_of_sentences]):	
+	for en_sen, de_sen, alignment in zip(en_txt[sentence_start:no_of_sentences], de_txt[sentence_start:no_of_sentences], alignments[sentence_start:no_of_sentences]):	
 		if j % 100 == 0:
 			print(float(j)/no_of_sentences)
 		j += 1
@@ -225,7 +225,7 @@ def create_dicts(en_txt,de_txt,alignments, no_of_sentences=50000):
 
 # assuming subphrases_dic['sentence (in english)'] = [['e_sub_1 ^ f_sub_1'], ['e_sub_2 ^ f_sub_2'], ['e_sub_3 ^ f_sub_3']]
 # 												   = [['0 1 2 ^ 2 3 4'],...]
-def count_reorderings(sentences, subphrases_dic):
+def count_reorderings(en_sentences, de_sentences, subphrases_dic):
 	# is this the phrase model?
 	# ASSUMING SUBPHRASES IN DICTIONARY ARE IN ORDER (in order of english words)
 	# ASSUMING EVERYTHING IS NUMBERS
@@ -237,43 +237,64 @@ def count_reorderings(sentences, subphrases_dic):
 	p_r_l_s_phrase_based  = {}
 	p_r_l_dl_phrase_based = {}
 	p_r_l_dr_phrase_based = {}
-	for sent in sentences:
+	for en_sen, de_sen in zip(en_sentences, de_sentences):
 		#
-		subphrases = subphrases_dic[sent[:-1]]
-		sent_split = sent.split()
-		for w_id, word in enumerate(sent_split):
-			for s_id, subphr in enumerate(subphrases):
-				[en1, de1] = subphr.split(" ^ ")
-				last_word_en = en1.split()[-1]
+		subphrases = subphrases_dic[en_sen[:-1]]
+		#sent_split = sent.split()
+		for s_id, subphr in enumerate(subphrases):
+			[en1, de1] = subphr.split(" ^ ")
+			if len(en1.split()) <= 7 and len(de1.split()) <= 7:
+					subphr_in_words = translate_numbers_to_words(en1, en_sen.split()) + " ^ " + translate_numbers_to_words(de1, de_sen.split())
+					subphr_in_words = subphr
+					last_word_en1  = en1.split()[-1]
+					first_word_en1 = en1.split()[0]
 
-				if w_id != len(sent_split):#left to right & right to left
-					if int(last_word_en) == w_id:
-						for s_id2 in range(len(subphrases)):#assuming its in order
-							[en2, de2] = subphrases[s_id2].split(" ^ ")
-							first_word = en2.split()[0]
-							#print str(w_id+1)
-							if first_word == str(w_id+1):
-								#print "hey"
-								last_word_de1  = de1.split()[-1]
-								first_word_de2 = de2.split()[0]
-								jump_size = int(first_word_de2)-int(last_word_de1)
-								if jump_size == 1:#monotonous
-									p_l_r_m_phrase_based[subphr] = p_l_r_m_phrase_based.get(subphr, 0) + 1
-								elif jump_size > 1:#discontinous
-									p_l_r_dr_phrase_based[subphr] = p_l_r_dr_phrase_based.get(subphr, 0) + 1
-								first_word_de1 = de1.split()[0]
-								last_word_de2  = de2.split()[-1]
-								jump_size = int(first_word_de1)-int(last_word_de2)
-								if jump_size == 1:#swap
-									p_l_r_s_phrase_based[subphr] = p_l_r_s_phrase_based.get(subphr, 0) + 1
-								elif jump_size > 1:#discontinous
-									p_l_r_dr_phrase_based[subphr] = p_l_r_dr_phrase_based.get(subphr, 0) + 1
+					'''if w_id != len(sent_split):#left to right
+						if int(last_word_en) == w_id:'''
+					for s_id2 in range(len(subphrases)):#not assuming its in order
+						[en2, de2] = subphrases[s_id2].split(" ^ ")
+						first_word_en2 = en2.split()[0]
+						last_word_en2  = en2.split()[-1]
+						if first_word_en2 == str(int(last_word_en1)+1):#left to right
+							last_word_de1  = de1.split()[-1]
+							first_word_de2 = de2.split()[0]
+							jump_size = int(first_word_de2)-int(last_word_de1)
+							if jump_size == 1:#monotonous
+								p_l_r_m_phrase_based[subphr_in_words]  = p_l_r_m_phrase_based.get(subphr_in_words, 0)  + 1
+							elif jump_size > 1:#discontinous
+								p_l_r_dr_phrase_based[subphr_in_words] = p_l_r_dr_phrase_based.get(subphr_in_words, 0) + 1
+							first_word_de1 = de1.split()[0]
+							last_word_de2  = de2.split()[-1]
+							jump_size = int(first_word_de1)-int(last_word_de2)
+							if jump_size == 1:#swap
+								p_l_r_s_phrase_based[subphr_in_words]  = p_l_r_s_phrase_based.get(subphr_in_words, 0)  + 1
+							elif jump_size > 1:#discontinous
+								p_l_r_dl_phrase_based[subphr_in_words] = p_l_r_dl_phrase_based.get(subphr_in_words, 0) + 1
 
-	return p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dr_phrase_based
+						if last_word_en2 == str(int(first_word_en1)-1):#right to left
+							first_word_de1 = de1.split()[0]
+							last_word_de2  = de2.split()[-1]
+							jump_size = int(first_word_de1)-int(last_word_de2)
+							if jump_size == 1:#monotonous
+								p_r_l_m_phrase_based[subphr_in_words]  = p_r_l_m_phrase_based.get(subphr_in_words, 0)  + 1
+							elif jump_size > 1:#discontinous
+								p_r_l_dl_phrase_based[subphr_in_words] = p_r_l_dl_phrase_based.get(subphr_in_words, 0) + 1
+							last_word_de1  = de1.split()[-1]
+							first_word_de2 = de2.split()[0]
+							jump_size = int(first_word_de2)-int(last_word_de1)
+							if jump_size == 1:#swap
+								p_r_l_s_phrase_based[subphr_in_words]  = p_r_l_s_phrase_based.get(subphr_in_words, 0)  + 1
+							elif jump_size > 1:#discontinous
+								p_r_l_dr_phrase_based[subphr_in_words] = p_r_l_dr_phrase_based.get(subphr_in_words, 0) + 1
+
+	return p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dr_phrase_based, p_l_r_dl_phrase_based,\
+		p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dr_phrase_based, p_r_l_dl_phrase_based
 
 if __name__ == '__main__':
 
-    no_of_sentences = 1
+    sentence_start  = 5#0
+    no_of_sentences = 1#50000
+    no_of_sentences = no_of_sentences+sentence_start
 
     e = open("en.txt", 'r')
     d = open("de.txt", 'r')
@@ -282,12 +303,27 @@ if __name__ == '__main__':
     de_txt = d.readlines()
     alignments = a.readlines()
 
-    subphrases_dic = create_dicts(en_txt,de_txt,alignments, no_of_sentences)
+    subphrases_dic = create_dicts(en_txt,de_txt,alignments, no_of_sentences, sentence_start)
 
     #print subphrases_dic
 
-    p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dr_phrase_based = count_reorderings(en_txt[:no_of_sentences], subphrases_dic)
+    p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dr_phrase_based, p_l_r_dl_phrase_based,\
+    p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dr_phrase_based, p_r_l_dl_phrase_based =\
+    count_reorderings(en_txt[sentence_start:no_of_sentences], de_txt[sentence_start:no_of_sentences], subphrases_dic)
 
-    #print p_l_r_m_phrase_based
-    #print p_l_r_s_phrase_based
-    #print p_l_r_dr_phrase_based
+    print 'p_l_r_m_phrase_based'
+    print p_l_r_m_phrase_based
+    print 'p_l_r_s_phrase_based'
+    print p_l_r_s_phrase_based
+    print 'p_l_r_dr_phrase_based'
+    print p_l_r_dr_phrase_based
+    print 'p_l_r_dl_phrase_based'
+    print p_l_r_dl_phrase_based
+    print 'p_r_l_m_phrase_based'
+    print p_r_l_m_phrase_based
+    print 'p_r_l_s_phrase_based'
+    print p_r_l_s_phrase_based
+    print 'p_r_l_dr_phrase_based'
+    print p_r_l_dr_phrase_based
+    print 'p_r_l_dl_phrase_based'
+    print p_r_l_dl_phrase_based
