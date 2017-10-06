@@ -2,6 +2,10 @@
 
 
 
+
+
+
+
 if __name__ == '__main__':
 
     e = open("en.txt", 'r')
