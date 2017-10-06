@@ -226,7 +226,7 @@ def create_dicts(en_txt,de_txt,alignments, no_of_sentences=50000, sentence_start
 # assuming subphrases_dic['sentence (in english)'] = [['e_sub_1 ^ f_sub_1'], ['e_sub_2 ^ f_sub_2'], ['e_sub_3 ^ f_sub_3']]
 # 												   = [['0 1 2 ^ 2 3 4'],...]
 def count_reorderings(en_sentences, de_sentences, subphrases_dic):
-	# is this the phrase model?
+	# only phrase-based for now
 	# ASSUMING SUBPHRASES IN DICTIONARY ARE IN ORDER (in order of english words)
 	# ASSUMING EVERYTHING IS NUMBERS
 	p_l_r_m_phrase_based  = {}
@@ -240,7 +240,6 @@ def count_reorderings(en_sentences, de_sentences, subphrases_dic):
 	for en_sen, de_sen in zip(en_sentences, de_sentences):
 		#
 		subphrases = subphrases_dic[en_sen[:-1]]
-		#sent_split = sent.split()
 		for s_id, subphr in enumerate(subphrases):
 			[en1, de1] = subphr.split(" ^ ")
 			if len(en1.split()) <= 7 and len(de1.split()) <= 7:
