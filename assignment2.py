@@ -413,6 +413,11 @@ if __name__ == '__main__':
     [p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dr_word_based, p_l_r_dl_word_based],\
     [p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dr_word_based, p_r_l_dl_word_based], list_of_subphrases_dic)
 
+    dictionaries_array = [[p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dr_phrase_based, p_l_r_dl_phrase_based],\
+    [p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dr_phrase_based, p_r_l_dl_phrase_based],\
+    [p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dr_word_based, p_l_r_dl_word_based],\
+    [p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dr_word_based, p_r_l_dl_word_based]]
+
     print '-----------------p_l_r_m_phrase_based-----------------'
     print p_l_r_m_phrase_based
     print '-----------------p_l_r_s_phrase_based-----------------'
@@ -446,3 +451,19 @@ if __name__ == '__main__':
     print p_r_l_dr_word_based
     print '-----------------p_r_l_dl_word_based-----------------'
     print p_r_l_dl_word_based
+
+
+    # write to output file
+    f = open("results", "w")
+
+    f.write("f ||| e ||| p1 p2 p3 p4 p5 p6 p7 p8\n\n")
+
+    for subphrase in list_of_subphrases_dic:
+        e,d = subphrase.split(" ^ ")
+        f.write(d + " ||| " + e + " |||")
+
+        for dic_array in dictionaries_array:
+            for dic in dic_array:
+                f.write(" " + str(dic.get(subphrase,0.0)))
+
+        f.write("\n")
