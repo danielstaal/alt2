@@ -404,19 +404,19 @@ if __name__ == '__main__':
     p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dr_word_based, p_r_l_dl_word_based =\
     count_reorderings(en_txt[sentence_start:no_of_sentences], de_txt[sentence_start:no_of_sentences], subphrases_dic, alignments[sentence_start:no_of_sentences])
 
-    [[p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dr_phrase_based, p_l_r_dl_phrase_based],\
-    [p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dr_phrase_based, p_r_l_dl_phrase_based],\
-    [p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dr_word_based, p_l_r_dl_word_based],\
-    [p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dr_word_based, p_r_l_dl_word_based]]=\
-    calculate_probabilities([p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dr_phrase_based, p_l_r_dl_phrase_based],\
-    [p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dr_phrase_based, p_r_l_dl_phrase_based],\
-    [p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dr_word_based, p_l_r_dl_word_based],\
-    [p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dr_word_based, p_r_l_dl_word_based], list_of_subphrases_dic)
+    [[p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dl_phrase_based, p_l_r_dr_phrase_based],\
+    [p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dl_phrase_based, p_r_l_dr_phrase_based],\
+    [p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dl_word_based, p_l_r_dr_word_based],\
+    [p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dl_word_based, p_r_l_dr_word_based]]=\
+    calculate_probabilities([p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dl_phrase_based, p_l_r_dr_phrase_based],\
+    [p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dl_phrase_based, p_r_l_dr_phrase_based],\
+    [p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dl_word_based, p_l_r_dr_word_based],\
+    [p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dl_word_based, p_r_l_dr_word_based], list_of_subphrases_dic)
 
-    dictionaries_array = [[p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dr_phrase_based, p_l_r_dl_phrase_based],\
-    [p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dr_phrase_based, p_r_l_dl_phrase_based],\
-    [p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dr_word_based, p_l_r_dl_word_based],\
-    [p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dr_word_based, p_r_l_dl_word_based]]
+    dictionaries_array = [[p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dl_phrase_based, p_l_r_dr_phrase_based],\
+    [p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dl_phrase_based, p_r_l_dr_phrase_based],\
+    [p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dl_word_based, p_l_r_dr_word_based],\
+    [p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dl_word_based, p_r_l_dr_word_based]]
 
     print '-----------------p_l_r_m_phrase_based-----------------'
     print p_l_r_m_phrase_based
