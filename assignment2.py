@@ -628,7 +628,6 @@ if __name__ == '__main__':
     dictionaries_array_word_based   = [[p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dl_word_based, p_l_r_dr_word_based],\
     [p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dl_word_based, p_r_l_dr_word_based]]
 
-
     # write to phrase based output file
     f_pb = open("results_phrase_based.txt", "w")
     f_wb = open("results_word_based.txt", "w")
@@ -653,3 +652,12 @@ if __name__ == '__main__':
 
             f_pb.write("\n")
             f_wb.write("\n")
+
+
+    with open('dictionaries_array_phrase_based.pickle', 'wb') as f:
+        # Pickle the 'data' dictionary using the highest protocol available.
+        pickle.dump(dictionaries_array_phrase_based, f)
+
+    with open('dictionaries_array_word_based.pickle', 'wb') as f:
+        # Pickle the 'data' dictionary using the highest protocol available.
+        pickle.dump(dictionaries_array_word_based, f)
