@@ -269,8 +269,7 @@ def count_reorderings(en_sentences, de_sentences, subphrases_dic, alignments):
     p_r_l_dr_word_based   = {}
     j=0
     for en_sen, de_sen, aligns in zip(en_sentences, de_sentences, alignments):
-        print(j)
-        if j % 500 == 0:
+        if j % 100 == 0:
             print(float(j)/50000)
         j += 1
         #
