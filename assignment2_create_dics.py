@@ -104,22 +104,22 @@ def phrase_extraction(sen1, sen2, alignments):#, en_sub_phrases, de_sub_phrases)
             for de_poss in possibilities[0]:
                 for en_poss in possibilities[1]:
                     # make sure the longest subphrase is 7 words
-                    if len(en_poss.split()) <= 7 and len(de_poss.split()) <= 7:
-                        aux_en_strings = reorder_string(en_poss)
-                        aux_de_strings = reorder_string(de_poss)
-                        if check_continuity(aux_en_strings, aux_de_strings):
-                            aux_en_strings = aux_en_strings[:-1]
-                            aux_de_strings = aux_de_strings[:-1]
-                            #en_sub_phrases[aux_en_strings] = en_sub_phrases.get(aux_en_strings, 0) + 1
-                            #de_sub_phrases[aux_de_strings] = de_sub_phrases.get(aux_de_strings, 0) + 1
-                            aux_en_strings_in_words = translate_numbers_to_words(aux_en_strings, sen1_words)
-                            aux_de_strings_in_words = translate_numbers_to_words(aux_de_strings, sen2_words)
-                            aux_en_strings_in_words = aux_en_strings_in_words[:-1]
-                            aux_de_strings_in_words = aux_de_strings_in_words[:-1]
-                            if aux_en_strings + ' ^ ' + aux_de_strings not in aligned_sub_phrases:
-                                aligned_sub_phrases.append(aux_en_strings + ' ^ ' + aux_de_strings)
-                                #seg_aligned_sub_phrases.append(aligned_words);#translate_numbers_to_words_aligned(aligned_words, sen1_words, sen2_words))
-                                aligned_sub_phrases_in_words.append(aux_en_strings_in_words + ' ^ ' + aux_de_strings_in_words)
+                    #if len(en_poss.split()) <= 7 and len(de_poss.split()) <= 7:
+                    aux_en_strings = reorder_string(en_poss)
+                    aux_de_strings = reorder_string(de_poss)
+                    if check_continuity(aux_en_strings, aux_de_strings):
+                        aux_en_strings = aux_en_strings[:-1]
+                        aux_de_strings = aux_de_strings[:-1]
+                        #en_sub_phrases[aux_en_strings] = en_sub_phrases.get(aux_en_strings, 0) + 1
+                        #de_sub_phrases[aux_de_strings] = de_sub_phrases.get(aux_de_strings, 0) + 1
+                        #aux_en_strings_in_words = translate_numbers_to_words(aux_en_strings, sen1_words)
+                        #aux_de_strings_in_words = translate_numbers_to_words(aux_de_strings, sen2_words)
+                        #aux_en_strings_in_words = aux_en_strings_in_words[:-1]
+                        #aux_de_strings_in_words = aux_de_strings_in_words[:-1]
+                        if aux_en_strings + ' ^ ' + aux_de_strings not in aligned_sub_phrases:
+                            aligned_sub_phrases.append(aux_en_strings + ' ^ ' + aux_de_strings)
+                            #seg_aligned_sub_phrases.append(aligned_words);#translate_numbers_to_words_aligned(aligned_words, sen1_words, sen2_words))
+                            #aligned_sub_phrases_in_words.append(aux_en_strings_in_words + ' ^ ' + aux_de_strings_in_words)
                         
 
 
@@ -233,8 +233,8 @@ def create_dicts(en_txt,de_txt,alignments, no_of_sentences=50000, sentence_start
 
         subphrases_dic[en_sen[:-1]+" ^ "+de_sen[:-1]] = aligned_sub_phrases;
 
-        for al in aligned_sub_phrases_in_words:
-            list_of_subphrases_dic[al] = 0
+        #for al in aligned_sub_phrases_in_words:
+        #    list_of_subphrases_dic[al] = 0
 
         '''for al, alignments, al_in_words in zip(aligned_sub_phrases, seg_aligned_sub_phrases, aligned_sub_phrases_in_words):
                                     if al_in_words not in aligns_dic:
@@ -267,14 +267,9 @@ def count_reorderings(en_sentences, de_sentences, subphrases_dic, alignments):
     p_r_l_s_word_based    = {}
     p_r_l_dl_word_based   = {}
     p_r_l_dr_word_based   = {}
-    j=0
     for en_sen, de_sen, aligns in zip(en_sentences, de_sentences, alignments):
-        print(j)
-        if j % 500 == 0:
-            print(float(j)/50000)
-        j += 1
         #
-        subphrases = subphrases_dic[en_sen[:-1]+" ^ "+de_sen[:-1]]
+        subphrases = subphrases_dic[en_sen[:-1]]
         for s_id, subphr in enumerate(subphrases):
             [en1, de1] = subphr.split(" ^ ")
             if len(en1.split()) <= 7 and len(de1.split()) <= 7:
@@ -377,11 +372,7 @@ def count_reorderings(en_sentences, de_sentences, subphrases_dic, alignments):
 def calculate_probabilities(c_l_r_phrase_based_array, c_r_l_phrase_based_array, c_l_r_word_based_array, c_r_l_word_based_array, list_of_subphrases_dic):
     dictionaries_array = [c_l_r_phrase_based_array, c_r_l_phrase_based_array, c_l_r_word_based_array, c_r_l_word_based_array]
 
-    j=0
     for subphrase in list_of_subphrases_dic:
-        if j % 500 == 0:
-            print(float(j)/no_of_sentences)
-        j += 1
         #print(subphrase)
         [en,de]=subphrase.split(" ^ ")
         if len(en.split()) <= 7 and len(de.split()) <= 7:
@@ -520,17 +511,17 @@ if __name__ == '__main__':
     en_txt = e.readlines()
     de_txt = d.readlines()
     alignments = a.readlines()
-    '''
+
     subphrases_dic, list_of_subphrases_dic = create_dicts(en_txt,de_txt,alignments, no_of_sentences, sentence_start)
 
     with open('subphrases_dic.pickle', 'wb') as f:
         # Pickle the 'data' dictionary using the highest protocol available.
         pickle.dump(subphrases_dic, f)
 
-    with open('list_of_subphrases_dic.pickle', 'wb') as f:
-        # Pickle the 'data' dictionary using the highest protocol available.
-        pickle.dump(list_of_subphrases_dic, f)'''
-
+    #with open('list_of_subphrases_dic.pickle', 'wb') as f:
+    #    # Pickle the 'data' dictionary using the highest protocol available.
+    #    pickle.dump(list_of_subphrases_dic, f)
+    '''
     print('Loading subphrases_dic...')
     subphrases_dic = {}
     with open('subphrases_dic.pickle', 'rb') as f:
@@ -541,11 +532,11 @@ if __name__ == '__main__':
     with open('list_of_subphrases_dic.pickle', 'rb') as f:
         list_of_subphrases_dic = pickle.load(f)
 
-    print('list_of_subphrases_dic loaded. Counting reorderings...')
+    print('list_of_subphrases_dic loaded.')'''
 
     # counts, probs = read_counts_and_probs()
     # print(counts)
-
+    '''
     #NOTE: we probably dont even need aligns_dic
     #rint subphrases_dic
     #print aligns_dic
@@ -556,8 +547,7 @@ if __name__ == '__main__':
     p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dr_word_based, p_l_r_dl_word_based,\
     p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dr_word_based, p_r_l_dl_word_based =\
     count_reorderings(en_txt[sentence_start:no_of_sentences], de_txt[sentence_start:no_of_sentences], subphrases_dic, alignments[sentence_start:no_of_sentences])
-    
-    print('Counted reorderings. Calculating probabilities...')
+
     # write to output file
     # f = open("counts", "w")
 
@@ -586,8 +576,6 @@ if __name__ == '__main__':
     [p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dl_phrase_based, p_r_l_dr_phrase_based],\
     [p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dl_word_based, p_l_r_dr_word_based],\
     [p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dl_word_based, p_r_l_dr_word_based], list_of_subphrases_dic)
-
-    print('Probabilities calculated.')
 
     # print('-----------------p_l_r_m_phrase_based-----------------')
     # print(p_l_r_m_phrase_based)
@@ -638,7 +626,7 @@ if __name__ == '__main__':
     f_wb.write("f ||| e ||| p1 p2 p3 p4 p5 p6 p7 p8\n\n")
 
     for subphrases in list_of_subphrases_dic:
-        e,d = subphrases.split(" ^ ")
+        e,d = subphrase.split(" ^ ")
         if len(e.split()) <= 7 and len(d.split()) <= 7:
 
             f_pb.write(d + " ||| " + e + " |||")
@@ -646,11 +634,11 @@ if __name__ == '__main__':
 
             for dic_array in dictionaries_array_phrase_based:
                 for dic in dic_array:
-                    f_pb.write(" " + str(dic.get(subphrases,0.0)))
+                    f_pb.write(" " + str(dic.get(subphrase,0.0)))
 
             for dic_array in dictionaries_array_word_based:
                 for dic in dic_array:
-                    f_wb.write(" " + str(dic.get(subphrases,0.0)))
+                    f_wb.write(" " + str(dic.get(subphrase,0.0)))
 
             f_pb.write("\n")
-            f_wb.write("\n")
+            f_wb.write("\n")'''
