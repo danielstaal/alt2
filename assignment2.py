@@ -525,13 +525,8 @@ def read_counts_and_probs():
     return counts_dic, probs_dic
 
 if __name__ == '__main__':
-<<<<<<< HEAD
     sentence_start  = 0#0
     no_of_sentences = 50000#50000
-=======
-    sentence_start  = 5
-    no_of_sentences = 300
->>>>>>> 18a721aa9be69e3d60510229091ae7f432274435
     no_of_sentences = no_of_sentences+sentence_start
 
     e = open("en.txt", 'r')
@@ -593,7 +588,7 @@ if __name__ == '__main__':
 
     #     f.write("\n")
 
-    count_barchart(dictionaries_array)
+    #count_barchart(dictionaries_array)
 
     # phraselength_orientation(counts)
 
