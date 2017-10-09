@@ -369,17 +369,21 @@ def count_reorderings(en_sentences, de_sentences, subphrases_dic, alignments):
         p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dr_word_based, p_l_r_dl_word_based,\
         p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dr_word_based, p_r_l_dl_word_based
 
-def calculate_probabilities(c_l_r_phrase_based_array, c_r_l_phrase_based_array, c_l_r_word_based_array, c_r_l_word_based_array, list_of_subphrases_dic):
+def calculate_probabilities(c_l_r_phrase_based_array, c_r_l_phrase_based_array, c_l_r_word_based_array, c_r_l_word_based_array, subphrases_dic):
     dictionaries_array = [c_l_r_phrase_based_array, c_r_l_phrase_based_array, c_l_r_word_based_array, c_r_l_word_based_array]
 
-    for subphrase in list_of_subphrases_dic:
-        for dic_array in dictionaries_array:
-            total_count = 0
-            for dic in dic_array:
-                total_count += dic.get(subphrase, 0)
-            if total_count > 0:
-                for dic in dic_array:
-                    dic[subphrase] = float(dic.get(subphrase, 0))/total_count
+    for phrase, subphrases in subphrases_dic.items():
+        for subphrase in subphrases:
+            #print(subphrase)
+            [en,de]=subphrase.split(" ^ ")
+            if len(en.split()) <= 7 and len(de.split()) <= 7:
+                for dic_array in dictionaries_array:
+                    total_count = 0
+                    for dic in dic_array:
+                        total_count += dic.get(subphrase, 0)
+                    if total_count > 0:
+                        for dic in dic_array:
+                            dic[subphrase] = float(dic.get(subphrase, 0))/total_count
 
     return dictionaries_array
 
@@ -525,13 +529,13 @@ if __name__ == '__main__':
     de_txt = d.readlines()
     alignments = a.readlines()
 
-    # subphrases = []
-    # with open('subphrases' + '.pkl', 'rb') as f:
-    #     subphrases = pickle.load(f)
+    subphrases_dic = []
+    with open('subphrases' + '.pkl', 'rb') as f:
+        subphrases_dic = pickle.load(f)
 
     # subphrases_dic, list_of_subphrases_dic = create_dicts(en_txt,de_txt,alignments, no_of_sentences, sentence_start)
 
-    counts, probs = read_counts_and_probs()
+    # counts, probs = read_counts_and_probs()
     # print(counts)
 
     #NOTE: we probably dont even need aligns_dic
@@ -539,16 +543,11 @@ if __name__ == '__main__':
     #print aligns_dic
     #print alignments[sentence_start:no_of_sentences]
 
-    # p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dr_phrase_based, p_l_r_dl_phrase_based,\
-    # p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dr_phrase_based, p_r_l_dl_phrase_based,\
-    # p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dr_word_based, p_l_r_dl_word_based,\
-    # p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dr_word_based, p_r_l_dl_word_based =\
-    # count_reorderings(en_txt[sentence_start:no_of_sentences], de_txt[sentence_start:no_of_sentences], subphrases_dic, alignments[sentence_start:no_of_sentences])
-
-    # dictionaries_array = [[p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dl_phrase_based, p_l_r_dr_phrase_based],\
-    # [p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dl_phrase_based, p_r_l_dr_phrase_based],\
-    # [p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dl_word_based, p_l_r_dr_word_based],\
-    # [p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dl_word_based, p_r_l_dr_word_based]]
+    p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dr_phrase_based, p_l_r_dl_phrase_based,\
+    p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dr_phrase_based, p_r_l_dl_phrase_based,\
+    p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dr_word_based, p_l_r_dl_word_based,\
+    p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dr_word_based, p_r_l_dl_word_based =\
+    count_reorderings(en_txt[sentence_start:no_of_sentences], de_txt[sentence_start:no_of_sentences], subphrases_dic, alignments[sentence_start:no_of_sentences])
 
     # write to output file
     # f = open("counts", "w")
@@ -570,19 +569,19 @@ if __name__ == '__main__':
     # phraselength_orientation(counts)
 
 
-    # [[p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dl_phrase_based, p_l_r_dr_phrase_based],\
-    # [p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dl_phrase_based, p_r_l_dr_phrase_based],\
-    # [p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dl_word_based, p_l_r_dr_word_based],\
-    # [p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dl_word_based, p_r_l_dr_word_based]]=\
-    # calculate_probabilities([p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dl_phrase_based, p_l_r_dr_phrase_based],\
-    # [p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dl_phrase_based, p_r_l_dr_phrase_based],\
-    # [p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dl_word_based, p_l_r_dr_word_based],\
-    # [p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dl_word_based, p_r_l_dr_word_based], list_of_subphrases_dic)
+    [[p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dl_phrase_based, p_l_r_dr_phrase_based],\
+    [p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dl_phrase_based, p_r_l_dr_phrase_based],\
+    [p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dl_word_based, p_l_r_dr_word_based],\
+    [p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dl_word_based, p_r_l_dr_word_based]]=\
+    calculate_probabilities([p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dl_phrase_based, p_l_r_dr_phrase_based],\
+    [p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dl_phrase_based, p_r_l_dr_phrase_based],\
+    [p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dl_word_based, p_l_r_dr_word_based],\
+    [p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dl_word_based, p_r_l_dr_word_based], subphrases_dic)
 
-    # dictionaries_array = [[p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dl_phrase_based, p_l_r_dr_phrase_based],\
-    # [p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dl_phrase_based, p_r_l_dr_phrase_based],\
-    # [p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dl_word_based, p_l_r_dr_word_based],\
-    # [p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dl_word_based, p_r_l_dr_word_based]]
+    dictionaries_array = [[p_l_r_m_phrase_based, p_l_r_s_phrase_based, p_l_r_dl_phrase_based, p_l_r_dr_phrase_based],\
+    [p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dl_phrase_based, p_r_l_dr_phrase_based],\
+    [p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dl_word_based, p_l_r_dr_word_based],\
+    [p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dl_word_based, p_r_l_dr_word_based]]
 
     # print('-----------------p_l_r_m_phrase_based-----------------')
     # print(p_l_r_m_phrase_based)
