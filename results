@@ -1,0 +1,36 @@
+f ||| e ||| p1 p2 p3 p4 p5 p6 p7 p8
+
+schweigeminute zu erheben . ||| minute 's silence . ||| 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0
+sich ||| rise , ||| 0.0 1.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0
+zu einer schweigeminute zu erheben . ||| for this minute 's silence . ||| 0.0 0.0 0.0 0.0 0.4 0.0 0.0 0.6 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0
+ich bitte sie ||| please ||| 0.666666666667 0.0 0.333333333333 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+, ||| , ||| 0.0 0.0 1.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0
+ich bitte sie , sich ||| please rise , then , ||| 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+ich bitte sie , sich zu einer ||| please rise , then , for this ||| 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+ich bitte sie , sich zu einer schweigeminute zu erheben . ||| please rise , then , for this minute 's silence . ||| 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+zu einer ||| for this ||| 1.0 0.0 0.0 0.0 0.4 0.0 0.0 0.6 1.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0
+sich ||| rise ||| 0.0 1.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0
+sich ||| rise , then ||| 0.0 1.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 1.0
+schweigeminute zu erheben . ||| silence . ||| 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+ich bitte sie , sich zu ||| please rise , then , for ||| 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+schweigeminute ||| minute 's silence ||| 0.0 0.0 1.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 1.0 0.0 0.0 0.0
+, sich ||| rise , then , ||| 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0
+zu einer schweigeminute zu erheben ||| for this minute 's silence ||| 1.0 0.0 0.0 0.0 0.4 0.0 0.0 0.6 1.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0
+zu einer schweigeminute ||| for this minute 's silence ||| 0.0 0.0 1.0 0.0 0.4 0.0 0.0 0.6 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0
+, sich zu ||| rise , then , for ||| 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0
+, ||| then , ||| 0.0 0.0 1.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0
+einer schweigeminute ||| this minute 's silence ||| 0.0 0.0 1.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 1.0 0.0 0.0 0.0
+, ||| , then , ||| 0.0 0.0 1.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 1.0 0.0 0.0
+zu ||| for ||| 1.0 0.0 0.0 0.0 0.4 0.0 0.0 0.6 1.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0
+einer schweigeminute zu erheben ||| this minute 's silence ||| 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0
+, sich zu einer schweigeminute zu erheben ||| rise , then , for this minute 's silence ||| 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+schweigeminute zu erheben ||| minute 's silence ||| 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0
+ich bitte sie , sich zu einer schweigeminute zu erheben ||| please rise , then , for this minute 's silence ||| 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+schweigeminute zu erheben ||| silence ||| 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+, sich zu einer schweigeminute zu erheben . ||| rise , then , for this minute 's silence . ||| 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+. ||| . ||| 0.0 0.0 0.0 0.0 0.545454545455 0.0 0.0 0.454545454545 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0
+einer schweigeminute zu erheben . ||| this minute 's silence . ||| 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0
+, sich zu einer ||| rise , then , for this ||| 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 0.0 0.0 0.0 1.0
+, sich zu einer schweigeminute ||| rise , then , for this minute 's silence ||| 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+ich bitte sie , sich zu einer schweigeminute ||| please rise , then , for this minute 's silence ||| 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0
+einer ||| this ||| 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0
