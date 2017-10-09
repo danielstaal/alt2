@@ -417,66 +417,82 @@ def count_barchart(dictionaries_array):
 
 # 
 def phraselength_orientation(counts_dic):
-    monotone_lr = [0.0,0,0.0,0.0,0.0,0.0,0.0]
+    monotone_lr = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
     swap_lr = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
     discontinuous_l_lr = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
     discontinuous_r_lr = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
-    monotone_rl = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
-    swap_rl = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
-    discontinuous_l_rl = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
-    discontinuous_r_rl = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
+    # monotone_rl = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
+    # swap_rl = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
+    # discontinuous_l_rl = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
+    # discontinuous_r_rl = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
 
-    class_list = [monotone_lr, swap_lr, discontinuous_l_lr, discontinuous_l_rl,
-    monotone_rl, swap_rl, discontinuous_l_rl, discontinuous_r_rl]
+    orientation_list = [monotone_lr, swap_lr, discontinuous_l_lr, discontinuous_r_lr]
+    # monotone_rl, swap_rl, discontinuous_l_rl, discontinuous_r_rl]
 
+    # print(counts_dic)
 
-    for subphrase, probs in counts_dic.items():
-        print(subphrase)
+    for subphrase, counts in counts_dic.items():
         subphrase_split = subphrase.split(" ^ ")
         # for english
         len_subphrase = len(subphrase_split[0].split(" ")) - 1
-        if len_subphrase > 0:
+        if len_subphrase > 6:
             len_subphrase = 6
-        print(len_subphrase)
-        print(subphrase_split)
+
         # for german
         # len_subphrase = len(subphrase[1].split(" ")) - 1
-        monotone_lr[len_subphrase] += probs[0]
-        swap_lr[len_subphrase] += probs[1]
-        discontinuous_l_lr[len_subphrase] = probs[2]
-        discontinuous_r_lr[len_subphrase] = probs[3]
-        monotone_rl[len_subphrase] = probs[4]
-        swap_rl[len_subphrase] = probs[5]
-        discontinuous_l_rl[len_subphrase] = probs[6]
-        discontinuous_r_rl[len_subphrase] = probs[7]
+        monotone_lr[len_subphrase] += counts[0]
+        swap_lr[len_subphrase] += counts[1]
+        discontinuous_l_lr[len_subphrase] += counts[2]
+        discontinuous_r_lr[len_subphrase] += counts[3]
+        # monotone_rl[len_subphrase] += counts[4]
+        # swap_rl[len_subphrase] += counts[5]
+        # discontinuous_l_rl[len_subphrase] += counts[6]
+        # discontinuous_r_rl[len_subphrase] += counts[7]
 
-    for cl in class_list:
-        total = sum(cl)
-        for i in range(len(cl)):
-            if total > 0:
-                cl[i] /= total
+    # print(orientation_list)
 
-    print(monotone_lr)
+    total_counts = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    # for each sentence length
+    sentence_length = 7
+    no_of_classes_compared = 4
+    for j in range(sentence_length):
+	    for i in range(no_of_classes_compared):
+	    	total_counts[j] += orientation_list[i][j]
+
+    # print(total_counts)
+
+    for cl in orientation_list[0:no_of_classes_compared]:
+        for i in range(sentence_length):
+            cl[i] /= total_counts[i]
+
+    # print(orientation_list)
+
 
     N = 7
     # men_means = (20, 35, 30, 35, 27)
     # men_std = (2, 3, 4, 1, 2)
 
     ind = np.arange(N)  # the x locations for the groups
-    width = 0.35       # the width of the bars
+    width = 0.15       # the width of the bars
 
     fig, ax = plt.subplots()
-    rects1 = ax.bar(ind, monotone_lr, width, color='r')
+    rects1 = ax.bar(ind-width, monotone_lr, width, color='g')
+    rects2 = ax.bar(ind, swap_lr, width, color='r')
 
-    rects2 = ax.bar(ind + width, monotone_rl, width, color='y')
+    rects3 = ax.bar(ind + width, discontinuous_l_lr, width, color='y')
+    rects4 = ax.bar(ind + 2*width, discontinuous_r_lr, width, color='b')
+
 
     # add some text for labels, title and axes ticks
     ax.set_ylabel('Frequency')
     ax.set_title('Frequencies of orientations per sentence length')
     ax.set_xticks(ind + width / 2)
     ax.set_xticklabels(('1', '2', '3', '4', '5','6','7'))
+    ax.autoscale(tight=True)
+    ax.set_ylim((0.0, 1.0))
 
-    ax.legend((rects1[0], rects2[0]), ('Monotone_lr', 'Mo_lr'))
+    
+    ax.legend((rects1[0], rects2[0], rects3[0], rects4[0]), ('Monotone_lr', 'Swap_lr', 'Discontinous_l_lr', 'Discontinous_r_lr'))
 
     plt.show()
 
@@ -501,16 +517,21 @@ def read_counts_and_probs():
     for i, subphrase in enumerate(lines):
         split = subphrase.split(" ||| ")
         split2 = split[-1].split(" ")
-        counts = []
-        for count in split2:
-            counts.append(float(count))
-        counts_dic[split[0] + ' ^ ' + split[1]] = counts
+        probs = []
+        for prob in split2:
+            probs.append(float(prob))
+        probs_dic[split[0] + ' ^ ' + split[1]] = probs
 
     return counts_dic, probs_dic
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     sentence_start  = 0#0
     no_of_sentences = 50000#50000
+=======
+    sentence_start  = 5
+    no_of_sentences = 300
+>>>>>>> 18a721aa9be69e3d60510229091ae7f432274435
     no_of_sentences = no_of_sentences+sentence_start
 
     e = open("en.txt", 'r')
@@ -572,7 +593,7 @@ if __name__ == '__main__':
 
     #     f.write("\n")
 
-    # count_barchart(dictionaries_array)
+    count_barchart(dictionaries_array)
 
     # phraselength_orientation(counts)
 
