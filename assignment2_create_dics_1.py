@@ -117,7 +117,7 @@ def phrase_extraction(sen1, sen2, alignments):#, en_sub_phrases, de_sub_phrases)
                             aux_en_strings_in_words = aux_en_strings_in_words[:-1]
                             aux_de_strings_in_words = aux_de_strings_in_words[:-1]
                             if aux_en_strings + ' ^ ' + aux_de_strings not in aligned_sub_phrases:
-                                aligned_sub_phrases.append(aux_en_strings + ' ^ ' + aux_de_strings)
+                                #aligned_sub_phrases.append(aux_en_strings + ' ^ ' + aux_de_strings)
                                 #seg_aligned_sub_phrases.append(aligned_words);#translate_numbers_to_words_aligned(aligned_words, sen1_words, sen2_words))
                                 aligned_sub_phrases_in_words.append(aux_en_strings_in_words + ' ^ ' + aux_de_strings_in_words)
                         
@@ -231,7 +231,7 @@ def create_dicts(en_txt,de_txt,alignments, no_of_sentences=50000, sentence_start
         
         aligned_sub_phrases, aligned_sub_phrases_in_words = phrase_extraction(en_sen[:-1], de_sen[:-1], alignment)#, en_dic, de_dic)
 
-        subphrases_dic[en_sen[:-1]+" ^ "+de_sen[:-1]] = aligned_sub_phrases;
+        #subphrases_dic[en_sen[:-1]+" ^ "+de_sen[:-1]] = aligned_sub_phrases;
 
         for al in aligned_sub_phrases_in_words:
             list_of_subphrases_dic[al] = 0
@@ -267,13 +267,9 @@ def count_reorderings(en_sentences, de_sentences, subphrases_dic, alignments):
     p_r_l_s_word_based    = {}
     p_r_l_dl_word_based   = {}
     p_r_l_dr_word_based   = {}
-    j=0
     for en_sen, de_sen, aligns in zip(en_sentences, de_sentences, alignments):
-        if j % 100 == 0:
-            print(float(j)/50000)
-        j += 1
         #
-        subphrases = subphrases_dic[en_sen[:-1]+" ^ "+de_sen[:-1]]
+        subphrases = subphrases_dic[en_sen[:-1]]
         for s_id, subphr in enumerate(subphrases):
             [en1, de1] = subphr.split(" ^ ")
             if len(en1.split()) <= 7 and len(de1.split()) <= 7:
@@ -328,9 +324,7 @@ def count_reorderings(en_sentences, de_sentences, subphrases_dic, alignments):
                     addition_right = 1
                     if int(first_word_en1) == 0: found_left = 1
                     if int(last_word_en1)  == len(en_sen.split()): found_right = 1
-                    dont_stall_in_while = 0
-                    while(found_left == 0 and found_right == 0 and dont_stall_in_while<=len(en_sen.split())):
-                        dont_stall_in_while += 1
+                    while(found_left == 0 and found_right == 0):
                         for align in aligns.split():
                             word_en2 = align.split('-')[1]
                             word_de2 = align.split('-')[0]
@@ -378,11 +372,7 @@ def count_reorderings(en_sentences, de_sentences, subphrases_dic, alignments):
 def calculate_probabilities(c_l_r_phrase_based_array, c_r_l_phrase_based_array, c_l_r_word_based_array, c_r_l_word_based_array, list_of_subphrases_dic):
     dictionaries_array = [c_l_r_phrase_based_array, c_r_l_phrase_based_array, c_l_r_word_based_array, c_r_l_word_based_array]
 
-    j=0
     for subphrase in list_of_subphrases_dic:
-        if j % 500 == 0:
-            print(float(j)/no_of_sentences)
-        j += 1
         #print(subphrase)
         [en,de]=subphrase.split(" ^ ")
         if len(en.split()) <= 7 and len(de.split()) <= 7:
@@ -419,82 +409,66 @@ def count_barchart(dictionaries_array):
 
 # 
 def phraselength_orientation(counts_dic):
-    monotone_lr = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
+    monotone_lr = [0.0,0,0.0,0.0,0.0,0.0,0.0]
     swap_lr = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
     discontinuous_l_lr = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
     discontinuous_r_lr = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
-    # monotone_rl = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
-    # swap_rl = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
-    # discontinuous_l_rl = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
-    # discontinuous_r_rl = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
+    monotone_rl = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
+    swap_rl = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
+    discontinuous_l_rl = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
+    discontinuous_r_rl = [0.0,0.0,0.0,0.0,0.0,0.0,0.0]
 
-    orientation_list = [monotone_lr, swap_lr, discontinuous_l_lr, discontinuous_r_lr]
-    # monotone_rl, swap_rl, discontinuous_l_rl, discontinuous_r_rl]
+    class_list = [monotone_lr, swap_lr, discontinuous_l_lr, discontinuous_l_rl,
+    monotone_rl, swap_rl, discontinuous_l_rl, discontinuous_r_rl]
 
-    # print(counts_dic)
 
-    for subphrase, counts in counts_dic.items():
+    for subphrase, probs in counts_dic.items():
+        print(subphrase)
         subphrase_split = subphrase.split(" ^ ")
         # for english
         len_subphrase = len(subphrase_split[0].split(" ")) - 1
-        if len_subphrase > 6:
+        if len_subphrase > 0:
             len_subphrase = 6
-
+        print(len_subphrase)
+        print(subphrase_split)
         # for german
         # len_subphrase = len(subphrase[1].split(" ")) - 1
-        monotone_lr[len_subphrase] += counts[0]
-        swap_lr[len_subphrase] += counts[1]
-        discontinuous_l_lr[len_subphrase] += counts[2]
-        discontinuous_r_lr[len_subphrase] += counts[3]
-        # monotone_rl[len_subphrase] += counts[4]
-        # swap_rl[len_subphrase] += counts[5]
-        # discontinuous_l_rl[len_subphrase] += counts[6]
-        # discontinuous_r_rl[len_subphrase] += counts[7]
+        monotone_lr[len_subphrase] += probs[0]
+        swap_lr[len_subphrase] += probs[1]
+        discontinuous_l_lr[len_subphrase] = probs[2]
+        discontinuous_r_lr[len_subphrase] = probs[3]
+        monotone_rl[len_subphrase] = probs[4]
+        swap_rl[len_subphrase] = probs[5]
+        discontinuous_l_rl[len_subphrase] = probs[6]
+        discontinuous_r_rl[len_subphrase] = probs[7]
 
-    # print(orientation_list)
+    for cl in class_list:
+        total = sum(cl)
+        for i in range(len(cl)):
+            if total > 0:
+                cl[i] /= total
 
-    total_counts = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    # for each sentence length
-    sentence_length = 7
-    no_of_classes_compared = 4
-    for j in range(sentence_length):
-	    for i in range(no_of_classes_compared):
-	    	total_counts[j] += orientation_list[i][j]
-
-    # print(total_counts)
-
-    for cl in orientation_list[0:no_of_classes_compared]:
-        for i in range(sentence_length):
-            cl[i] /= total_counts[i]
-
-    # print(orientation_list)
-
+    print(monotone_lr)
 
     N = 7
     # men_means = (20, 35, 30, 35, 27)
     # men_std = (2, 3, 4, 1, 2)
 
     ind = np.arange(N)  # the x locations for the groups
-    width = 0.15       # the width of the bars
+    width = 0.35       # the width of the bars
 
     fig, ax = plt.subplots()
-    rects1 = ax.bar(ind-width, monotone_lr, width, color='g')
-    rects2 = ax.bar(ind, swap_lr, width, color='r')
+    rects1 = ax.bar(ind, monotone_lr, width, color='r')
 
-    rects3 = ax.bar(ind + width, discontinuous_l_lr, width, color='y')
-    rects4 = ax.bar(ind + 2*width, discontinuous_r_lr, width, color='b')
-
+    rects2 = ax.bar(ind + width, monotone_rl, width, color='y')
 
     # add some text for labels, title and axes ticks
     ax.set_ylabel('Frequency')
     ax.set_title('Frequencies of orientations per sentence length')
     ax.set_xticks(ind + width / 2)
     ax.set_xticklabels(('1', '2', '3', '4', '5','6','7'))
-    ax.autoscale(tight=True)
-    ax.set_ylim((0.0, 1.0))
 
-    
-    ax.legend((rects1[0], rects2[0], rects3[0], rects4[0]), ('Monotone_lr', 'Swap_lr', 'Discontinous_l_lr', 'Discontinous_r_lr'))
+    ax.legend((rects1[0], rects2[0]), ('Monotone_lr', 'Mo_lr'))
 
     plt.show()
 
@@ -519,10 +493,10 @@ def read_counts_and_probs():
     for i, subphrase in enumerate(lines):
         split = subphrase.split(" ||| ")
         split2 = split[-1].split(" ")
-        probs = []
-        for prob in split2:
-            probs.append(float(prob))
-        probs_dic[split[0] + ' ^ ' + split[1]] = probs
+        counts = []
+        for count in split2:
+            counts.append(float(count))
+        counts_dic[split[0] + ' ^ ' + split[1]] = counts
 
     return counts_dic, probs_dic
 
@@ -537,17 +511,17 @@ if __name__ == '__main__':
     en_txt = e.readlines()
     de_txt = d.readlines()
     alignments = a.readlines()
-    '''
+
     subphrases_dic, list_of_subphrases_dic = create_dicts(en_txt,de_txt,alignments, no_of_sentences, sentence_start)
 
-    with open('subphrases_dic.pickle', 'wb') as f:
-        # Pickle the 'data' dictionary using the highest protocol available.
-        pickle.dump(subphrases_dic, f)
+    #with open('subphrases_dic.pickle', 'wb') as f:
+    #    # Pickle the 'data' dictionary using the highest protocol available.
+    #    pickle.dump(subphrases_dic, f)
 
     with open('list_of_subphrases_dic.pickle', 'wb') as f:
         # Pickle the 'data' dictionary using the highest protocol available.
-        pickle.dump(list_of_subphrases_dic, f)'''
-
+        pickle.dump(list_of_subphrases_dic, f)
+    '''
     print('Loading subphrases_dic...')
     subphrases_dic = {}
     with open('subphrases_dic.pickle', 'rb') as f:
@@ -558,11 +532,11 @@ if __name__ == '__main__':
     with open('list_of_subphrases_dic.pickle', 'rb') as f:
         list_of_subphrases_dic = pickle.load(f)
 
-    print('list_of_subphrases_dic loaded. Counting reorderings...')
+    print('list_of_subphrases_dic loaded.')'''
 
     # counts, probs = read_counts_and_probs()
     # print(counts)
-
+    '''
     #NOTE: we probably dont even need aligns_dic
     #rint subphrases_dic
     #print aligns_dic
@@ -573,8 +547,7 @@ if __name__ == '__main__':
     p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dr_word_based, p_l_r_dl_word_based,\
     p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dr_word_based, p_r_l_dl_word_based =\
     count_reorderings(en_txt[sentence_start:no_of_sentences], de_txt[sentence_start:no_of_sentences], subphrases_dic, alignments[sentence_start:no_of_sentences])
-    
-    print('Counted reorderings. Calculating probabilities...')
+
     # write to output file
     # f = open("counts", "w")
 
@@ -590,7 +563,7 @@ if __name__ == '__main__':
 
     #     f.write("\n")
 
-    #count_barchart(dictionaries_array)
+    # count_barchart(dictionaries_array)
 
     # phraselength_orientation(counts)
 
@@ -603,8 +576,6 @@ if __name__ == '__main__':
     [p_r_l_m_phrase_based, p_r_l_s_phrase_based, p_r_l_dl_phrase_based, p_r_l_dr_phrase_based],\
     [p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dl_word_based, p_l_r_dr_word_based],\
     [p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dl_word_based, p_r_l_dr_word_based], list_of_subphrases_dic)
-
-    print('Probabilities calculated.')
 
     # print('-----------------p_l_r_m_phrase_based-----------------')
     # print(p_l_r_m_phrase_based)
@@ -646,6 +617,7 @@ if __name__ == '__main__':
     dictionaries_array_word_based   = [[p_l_r_m_word_based, p_l_r_s_word_based, p_l_r_dl_word_based, p_l_r_dr_word_based],\
     [p_r_l_m_word_based, p_r_l_s_word_based, p_r_l_dl_word_based, p_r_l_dr_word_based]]
 
+
     # write to phrase based output file
     f_pb = open("results_phrase_based.txt", "w")
     f_wb = open("results_word_based.txt", "w")
@@ -654,7 +626,7 @@ if __name__ == '__main__':
     f_wb.write("f ||| e ||| p1 p2 p3 p4 p5 p6 p7 p8\n\n")
 
     for subphrases in list_of_subphrases_dic:
-        e,d = subphrases.split(" ^ ")
+        e,d = subphrase.split(" ^ ")
         if len(e.split()) <= 7 and len(d.split()) <= 7:
 
             f_pb.write(d + " ||| " + e + " |||")
@@ -662,20 +634,11 @@ if __name__ == '__main__':
 
             for dic_array in dictionaries_array_phrase_based:
                 for dic in dic_array:
-                    f_pb.write(" " + str(dic.get(subphrases,0.0)))
+                    f_pb.write(" " + str(dic.get(subphrase,0.0)))
 
             for dic_array in dictionaries_array_word_based:
                 for dic in dic_array:
-                    f_wb.write(" " + str(dic.get(subphrases,0.0)))
+                    f_wb.write(" " + str(dic.get(subphrase,0.0)))
 
             f_pb.write("\n")
-            f_wb.write("\n")
-
-
-    with open('dictionaries_array_phrase_based.pickle', 'wb') as f:
-        # Pickle the 'data' dictionary using the highest protocol available.
-        pickle.dump(dictionaries_array_phrase_based, f)
-
-    with open('dictionaries_array_word_based.pickle', 'wb') as f:
-        # Pickle the 'data' dictionary using the highest protocol available.
-        pickle.dump(dictionaries_array_word_based, f)
+            f_wb.write("\n")'''
